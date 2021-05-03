@@ -9,7 +9,7 @@ const schema = mongoose.Schema({
         required : true,
         unique : true,
         validate(value){
-            if(!value.match(/EC(0-9){5}/)){
+            if(!value.match(/^EC[0-9]{5}$/)){
                 throw new ApiError(httpStatus.NOT_ACCEPTABLE, "ECID must be like ECXXXXX");
             }
         }

@@ -10,7 +10,7 @@ const schema = mongoose.Schema({
         required : true,
         unique : true,
         validate(value){
-            if(!(value.match(/V[0-9]{5}/))){
+            if(!(value.match(/V(0-9){5}/))){
                 throw new ApiError(httpStatus.NOT_ACCEPTABLE, "VoterID must like VXXXXX");
             }
         }

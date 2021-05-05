@@ -1,6 +1,7 @@
 const httpStatus = require("http-status");
+const ApiError = require("../middlewares/ApiError");
 const catchAsync = require("../middlewares/catchAsync");
-const { ecService } = require("../services");
+const { ecService, tokenService } = require("../services");
 
 const register = catchAsync(async(req, res) => {
     const ec = await ecService.createEc(req.body);
@@ -9,7 +10,19 @@ const register = catchAsync(async(req, res) => {
 
 const login = catchAsync(async(req, res) => {
     const ec = await ecService.verifyCredientials(req.body);
-    res.status(httpStatus.UNAUTHORIZED).send({ec});
+    const token = await tokenService.createToken(ec.ecId, ec.role);
+    res.status(httpStatus.OK).send({ec, token});
+});
+
+const refreshToken = catchAsync(async(req, res) => {
+    const inputToken = req.headers.authorization.split(' ')[1];
+    const payload = await tokenService.verifyToken(inputToken);
+    const ec = await ecService.getEcByEcId(payload.sub);
+    if(!ec){
+        throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid token");
+    }
+    const token = await tokenService.createToken(ec.ecId, ec.role);
+    res.status(httpStatus.OK).send({token});
 });
 
 const queryEcs = catchAsync(async(req, res) => {
@@ -25,6 +38,7 @@ const getEcByEcId = catchAsync(async(req, res) => {
 module.exports = {
     register,
     login,
+    refreshToken,
     queryEcs,
     getEcByEcId
 };

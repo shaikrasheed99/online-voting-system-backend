@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev" : "nodemon index.js"
   },
   "keywords": [],
   "author": "rashid",
@@ -18,6 +19,8 @@
     "express-mongo-sanitize": "^2.0.2",
     "helmet": "^4.6.0",
     "http-status": "^1.5.0",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.1",
     "mongoose": "^5.12.7",
     "morgan": "^1.10.0",
     "validator": "^13.6.0",

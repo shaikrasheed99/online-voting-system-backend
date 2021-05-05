@@ -5,7 +5,6 @@ router.post('/register', voterController.register);
 router.post('/login', voterController.login);
 router.post('/refreshToken', voterController.refreshToken);
 
-router.get('/voters', voterController.queryVoters);
 router.get('/voters/:voterId', voterController.getVoterByVoterId);
 router.patch('/voters', voterController.updateVoterByVoterId);
 router.delete('/voters', voterController.deleteVoterByVoterId);

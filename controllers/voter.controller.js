@@ -1,6 +1,7 @@
 const catchAsync = require("../middlewares/catchAsync");
 const httpStatus = require("http-status");
 const { voterService, tokenService } = require("../services");
+const ApiError = require("../middlewares/ApiError");
 
 const register = catchAsync(async(req, res) => {
     const voter = await voterService.createVoter(req.body);
@@ -9,13 +10,18 @@ const register = catchAsync(async(req, res) => {
 
 const login = catchAsync(async(req, res) => {
     const voter = await voterService.verifyCredientials(req.body);
-    //const token = await tokenService.createToken(voter.voterId, voter.role);
+    const token = await tokenService.createToken(voter.voterId, voter.role);
     res.status(httpStatus.OK).send({voter, token});
 });
 
 const refreshToken = catchAsync(async(req, res) => {
     const inputToken = req.headers.authorization.split(' ')[1];
-    const token = await tokenService.verifyToken(inputToken);
+    const payload = await tokenService.verifyToken(inputToken);
+    const voter = await voterService.getVoterByVoterId(payload.sub);
+    if(!voter){
+        throw new ApiError(httpStatus.UNAUTHORIZED, "Invalid token");
+    }
+    const token = await tokenService.createToken(voter.voterId, voter.role);
     res.status(httpStatus.OK).send({token});
 });
 

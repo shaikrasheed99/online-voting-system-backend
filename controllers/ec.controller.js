@@ -31,7 +31,7 @@ const queryEcs = catchAsync(async(req, res) => {
 });
 
 const getEcByEcId = catchAsync(async(req, res) => {
-    const ec = await ecService.getEcByEcId(req.params.ecId);
+    const ec = await ecService.getEcByEcId(req.params.ecid);
     res.status(httpStatus.FOUND).send({ec});
 });
 

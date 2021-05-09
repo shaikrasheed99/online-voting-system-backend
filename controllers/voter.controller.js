@@ -27,11 +27,11 @@ const refreshToken = catchAsync(async(req, res) => {
 
 const queryVoters = catchAsync(async(req, res) => {
     const voters = await voterService.queryVoters();
-    res.status(httpStatus.FOUND).send({voters});
+    res.status(httpStatus.OK).send({voters});
 });
 
 const getVoterByVoterId = catchAsync(async(req, res) => {
-    const voter = await voterService.getVoterByVoterId(req.params.voterId);
+    const voter = await voterService.getVoterByVoterId(req.params.voterid);
     res.status(httpStatus.FOUND).send({voter});
 });
 
@@ -42,12 +42,7 @@ const updateVoterByVoterId = catchAsync(async(req, res) => {
 
 const deleteVoterByVoterId = catchAsync(async(req, res) => {
     const deletedVoter = await voterService.deleteVoterByVoterId(req.body);
-    const response = {
-        code : httpStatus.OK,
-        message : "Deleted Voter",
-        result : deletedVoter
-    };
-    res.status(httpStatus.OK).send(response);
+    res.status(httpStatus.OK).send({deletedVoter});
 });
 
 module.exports = {

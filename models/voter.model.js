@@ -66,7 +66,7 @@ const schema = mongoose.Schema({
     gender : {
         type : String,
         required : true,
-        enum : ['M', 'F']
+        enum : ['M', 'F', 'O']
     },
     mobile : {
         type : String,

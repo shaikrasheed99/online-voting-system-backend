@@ -3,6 +3,6 @@ const voterRoutes = require("./voter.routes");
 const ecRoutes = require("./ec.routes");
 
 router.use('/', voterRoutes);
-router.use('/EC', ecRoutes);
+router.use('/ec', ecRoutes);
 
 module.exports = router;

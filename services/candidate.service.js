@@ -37,7 +37,7 @@ const getNominationRequests = async() => {
 
 const queryCandidates = async() => {
     const candidates = [];
-    await (await Candidate.find()).forEach((candidate) => {
+    await (await Candidate.find({accepted : 1})).forEach((candidate) => {
         candidates.push(candidate);
     });
     if(candidates.length == 0){
@@ -51,7 +51,7 @@ const getCandidatesByType = async(type) => {
         throw new ApiError(httpStatus.BAD_REQUEST, "Type is required");
     }
     const candidates = [];
-    await (await Candidate.find({type})).forEach((candidate) => {
+    await (await Candidate.find({type, accepted : 1})).forEach((candidate) => {
         candidates.push(candidate);
     });
     if(candidates.length == 0){
@@ -101,25 +101,25 @@ const getCandidatesByTypeAndArea = async(type, area) => {
     }
     let candidates = [];
     if(type === 'mp'){
-        await (await Candidate.find({type})).forEach((candidate) => {
+        await (await Candidate.find({type, accepted : 1})).forEach((candidate) => {
             if(candidate.voterInfo.district === area){
                 candidates.push(candidate);
             }
         });
     } else if(type === 'mla'){
-        await (await Candidate.find({type})).forEach((candidate) => {
+        await (await Candidate.find({type, accepted : 1})).forEach((candidate) => {
             if(candidate.voterInfo.constituency === area){
                 candidates.push(candidate);
             }
         });
     } else if(type === 'zptc'){
-        await (await Candidate.find({type})).forEach((candidate) => {
+        await (await Candidate.find({type, accepted : 1})).forEach((candidate) => {
             if(candidate.voterInfo.mandal === area){
                 candidates.push(candidate);
             }
         });
     } else if(type === 'sarpanch'){
-        await (await Candidate.find({type})).forEach((candidate) => {
+        await (await Candidate.find({type, accepted : 1})).forEach((candidate) => {
             if(candidate.voterInfo.village === area){
                 candidates.push(candidate);
             }

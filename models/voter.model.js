@@ -1,8 +1,8 @@
 const httpStatus = require("http-status");
 const mongoose = require("mongoose");
 const validator = require("validator");
-const ApiError = require("../middlewares/ApiError");
 const bcrypt = require("bcrypt");
+const ApiError = require("../middlewares/ApiError");
 
 const schema = mongoose.Schema({
     voterId : {
@@ -126,11 +126,6 @@ schema.methods.isPasswordMatch = async function(password){
 };
 
 schema.pre('save', async function(next){
-    if(this.password !== this.confirmPassword){
-        throw new ApiError(httpStatus.NOT_ACCEPTABLE, "Password and Confirmation password are didn't matched");
-    }
-    this.password = await bcrypt.hash(this.password, 10);
-    this.confirmPassword = await bcrypt.hash(this.confirmPassword, 10);
     next();
 });
 

@@ -1,4 +1,5 @@
 const httpStatus = require("http-status");
+const bcrypt = require("bcrypt");
 const { Voter, Candidate } = require("../models");
 const ApiError = require("../middlewares/ApiError");
 const candidateService = require("./candidate.service");
@@ -10,6 +11,8 @@ const createVoter = async(voterBody) => {
     if(await Voter.isVoterIdTaken(voterBody.voterId)){
         throw new ApiError(httpStatus.NOT_ACCEPTABLE, "VoterID is already taken");
     }
+    voterBody.password = await bcrypt.hash(voterBody.password, 10);
+    voterBody.confirmPassword = voterBody.password;
     const voter = await Voter.create(voterBody);
     return voter;
 };

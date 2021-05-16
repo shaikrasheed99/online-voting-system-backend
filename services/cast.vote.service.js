@@ -83,13 +83,13 @@ const cmResults = async(inputType) => {
         });
     }
     var winners = [];
-    await responce.every(async(element) => {
+    responce.every(async(element) => {
         const partyName = element._id;
         const candidate = await candidateService.getCmCandidate("cm", partyName);
-        winners.push(candidate);
-        console.log(winners);
+        winners[winners.length] = candidate;
         return true;
     });
+    console.log(winners);
     return winners;
 };
 

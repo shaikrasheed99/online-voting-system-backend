@@ -6,20 +6,20 @@ router.post('/register', voterController.register);
 router.post('/login', voterController.login);
 router.post('/refresh-token', voterController.refreshToken);
 
-router.get('/voters/:voterid', voterController.getVoterByVoterId);
-router.patch('/voters', voterController.updateVoterByVoterId);
-router.delete('/voters', voterController.deleteVoterByVoterId);
+router.get('/voters/:voterId', auth(["voter"]), voterController.getVoterByVoterId);
+router.patch('/voters', auth(["voter"]), voterController.updateVoterByVoterId);
+router.delete('/voters', auth(["voter"]), voterController.deleteVoterByVoterId);
 
-router.get('/candidate-exists/:type/:area/:partyName', candidateController.candidateExistsByTypeAreaPartyName);
-router.post('/request-nomination', candidateController.requestNomination);
-router.get('/candidates/:data', candidateController.getCandidateByIdOrType);
-router.get('/candidates/:type/:area', candidateController.getCandidatesByTypeAndArea);
-router.patch('/candidates', candidateController.updateCandidateByCandidateId);
-router.delete('/candidates', candidateController.deleteCandidateByCandidateId);
+router.get('/candidate-exists/:type/:area/:partyName', auth(["voter"]), candidateController.candidateExistsByTypeAreaPartyName);
+router.post('/request-nomination', auth(["voter"]), candidateController.requestNomination);
+router.get('/candidates/:data', auth(["voter"]), candidateController.getCandidateByIdOrType);
+router.get('/candidates/:type/:area', auth(["voter"]), candidateController.getCandidatesByTypeAndArea);
+router.patch('/candidates', auth(["voter"]), candidateController.updateCandidateByCandidateId);
+router.delete('/candidates', auth(["voter"]), candidateController.deleteCandidateByCandidateId);
 
-router.get('/voted/:voterId/:type', castVoteController.isVoted);
-router.post('/cast-vote', castVoteController.castVote);
-router.get('/results/:type/:area', castVoteController.resultsByTypeAndArea);
-router.get('/cm-results', castVoteController.cmResults);
+router.get('/voted/:voterId/:type', auth(["voter"]), castVoteController.isVoted);
+router.post('/cast-vote', auth(["voter"]), castVoteController.castVote);
+router.get('/results/:type/:area', auth(["voter"]), castVoteController.resultsByTypeAndArea);
+router.get('/cm-results', auth(["voter"]), castVoteController.cmResults);
 
 module.exports = router;

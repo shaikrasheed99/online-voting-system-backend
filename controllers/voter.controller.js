@@ -31,7 +31,7 @@ const queryVoters = catchAsync(async(req, res) => {
 });
 
 const getVoterByVoterId = catchAsync(async(req, res) => {
-    const voter = await voterService.getVoterByVoterId(req.params.voterid);
+    const voter = await voterService.getVoterByVoterId(req.params.voterId);
     res.status(httpStatus.FOUND).send({voter});
 });
 

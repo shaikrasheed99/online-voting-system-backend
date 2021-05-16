@@ -1,6 +1,7 @@
 const httpStatus = require("http-status");
 const ApiError = require("../middlewares/ApiError");
 const { Candidate, Voter } = require("../models");
+const voterService = require("./voter.service.js");
 
 const createCandidate = async(candidateBody) => {
     if(!candidateBody.voterId){
@@ -11,6 +12,19 @@ const createCandidate = async(candidateBody) => {
     }
     if(await Candidate.isVoterIdTaken(candidateBody.voterId)){
         throw new ApiError(httpStatus.BAD_REQUEST, "Candidate is already registered");
+    }
+    const {voterId, candidateId, type, partyName} = candidateBody;
+    const voter = await voterService.getVoterByVoterId(voterId);
+    if((type === "cm") && (await candidateExistsByTypeAreaPartyName(type, voter.state, partyName))){
+        throw new ApiError(httpStatus.BAD_REQUEST, "CM Candidate already there with that partname and type in that area");
+    } else if((type === "mp") && (await candidateExistsByTypeAreaPartyName(type, voter.district, partyName))){
+        throw new ApiError(httpStatus.BAD_REQUEST, "MP Candidate already there with that partname and type in that area");
+    } else if((type === "mla") && (await candidateExistsByTypeAreaPartyName(type, voter.constituency, partyName))){
+        throw new ApiError(httpStatus.BAD_REQUEST, "MLA Candidate already there with that partname and type in that area");
+    } else if((type === "zptc") && (await candidateExistsByTypeAreaPartyName(type, voter.mandal, partyName))){
+        throw new ApiError(httpStatus.BAD_REQUEST, "ZPTC Candidate already there with that partname and type in that area");
+    } else if((type === "sarpanch") && (await candidateExistsByTypeAreaPartyName(type, voter.village, partyName))){
+        throw new ApiError(httpStatus.BAD_REQUEST, "Sarpanch Candidate already there with that partname and type in that area");
     }
     const candidate = await Candidate.create(candidateBody);
     return candidate;
@@ -32,6 +46,9 @@ const acceptCandidate = async(candidateBody) => {
 
 const getNominationRequests = async() => {
     const requests = await Candidate.find({accepted : 0});
+    if(requests.length == 0){
+        throw new ApiError(httpStatus.NOT_FOUND, "Empty requests");
+    }
     return requests;
 };
 
@@ -88,6 +105,14 @@ const getCandidateByIdOrType = async(data) => {
         candidate = await getCandidateByCandidateId(data);
     } else {
         candidate = await getCandidatesByType(data);
+    }
+    return candidate;
+};
+
+const getCmCandidate = async(type, partyName) => {
+    const candidate = await Candidate.findOne({type, accepted : 1, partyName});
+    if(!candidate){
+        throw new ApiError(httpStatus.NOT_FOUND, "CM candidate not found");
     }
     return candidate;
 };
@@ -156,6 +181,56 @@ const deleteCandidateByCandidateId = async(candidateBody) => {
     return candidate;
 };
 
+const candidateExistsByTypeAreaPartyName = async(type, area, partyName) => {
+    let existedCandidate;
+    if(type === "cm"){
+        await (await Candidate.find({type, partyName})).every((candidate) => {
+            if(candidate.voterInfo.state === area){
+                existedCandidate = candidate;
+                return false;
+            }
+            return true;
+        });
+    } else if(type === "mp"){
+        await (await Candidate.find({type, partyName})).every((candidate) => {
+            if(candidate.voterInfo.district === area){
+                existedCandidate = candidate;
+                return false;
+            }
+            return true;
+        });
+    } else if(type === "mla") {
+        await (await Candidate.find({type, partyName})).every((candidate) => {
+            if(candidate.voterInfo.constituency === area){
+                existedCandidate = candidate
+                return false;
+            }
+            return true;
+        });
+    } else if(type === "zptc") {
+        await (await Candidate.find({type, partyName})).forEach((candidate) => {
+            if(candidate.voterInfo.mandal === area){
+                existedCandidate = candidate;
+                return false;
+            }
+            return true;
+        });
+    } else if(type === "sarpanch") {
+        await (await Candidate.find({type, partyName})).forEach((candidate) => {
+            if(candidate.voterInfo.village === area){
+                existedCandidate = candidate;
+                return false;
+            }
+            return true;
+        });
+    }
+    if(existedCandidate){
+        return true;
+    } else {
+        return false;
+    }
+};
+
 module.exports = {
     createCandidate,
     acceptCandidate,
@@ -167,5 +242,7 @@ module.exports = {
     getCandidatesByType,
     getCandidatesByTypeAndArea,
     updateCandidateByCandidateId,
-    deleteCandidateByCandidateId
+    deleteCandidateByCandidateId,
+    candidateExistsByTypeAreaPartyName,
+    getCmCandidate
 };

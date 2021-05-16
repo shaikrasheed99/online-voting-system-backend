@@ -5,6 +5,8 @@ const cors = require("cors");
 const mongoSanitize = require("express-mongo-sanitize");
 const compression = require("compression");
 const httpStatus = require("http-status");
+const passport = require("passport");
+const jwtStrategy = require('./config/passport');
 const morgan = require("./config/morgan");
 const routes = require("./routes");
 const { errorConverter, errorHandler } = require("./middlewares/error");
@@ -39,6 +41,10 @@ app.use(compression());
 //enable preflight requests
 app.use(cors());
 app.options('*', cors());
+
+//JWT Token authentication
+app.use(passport.initialize());
+passport.use('jwt', jwtStrategy);
 
 //whole routes
 app.use('/', routes);

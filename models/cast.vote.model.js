@@ -21,6 +21,11 @@ const schema = new mongoose.Schema({
         type : String,
         trim : true,
         lowercase : true
+    },
+    partyName : {
+        type : String,
+        trim : true,
+        lowercase : true
     }
 });
 
@@ -31,6 +36,7 @@ schema.pre('save', async function(next){
     const voter = await Voter.findOne({voterId});
     const candidateId = this.candidateId;
     const candidate = await Candidate.findOne({candidateId});
+    this.partyName = candidate.partyName;
     this.type = candidate.type;
     if(this.type === "mp"){
         if(voter.district !== candidate.voterInfo.district){
@@ -56,6 +62,6 @@ schema.pre('save', async function(next){
     next();
 });
 
-const CastVote = mongoose.model("castevotes", schema);
+const CastVote = mongoose.model("castvotes", schema);
 
 module.exports = CastVote;

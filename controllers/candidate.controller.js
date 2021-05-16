@@ -42,6 +42,16 @@ const deleteCandidateByCandidateId = catchAsync(async(req, res) => {
     res.status(httpStatus.OK).send({deletedCandidate});
 });
 
+const candidateExistsByTypeAreaPartyName = catchAsync(async(req, res) => {
+    const {type, area, partyName} = req.params;
+    const candidate = await candidateService.candidateExistsByTypeAreaPartyName(type, area, partyName);
+    if(candidate){
+        res.status(httpStatus.FOUND).send("Candidate already with that partname and type in that area");
+    } else {
+        res.status(httpStatus.NOT_FOUND).send("Candidate not exists");
+    }
+});
+
 module.exports = {
     requestNomination,
     acceptNomination,
@@ -50,5 +60,6 @@ module.exports = {
     getCandidateByIdOrType,
     getCandidatesByTypeAndArea,
     updateCandidateByCandidateId,
-    deleteCandidateByCandidateId
+    deleteCandidateByCandidateId,
+    candidateExistsByTypeAreaPartyName
 };

@@ -16,7 +16,33 @@ const isVoted = catchAsync(async(req, res) => {
     }
 });
 
+const resultsByTypeAndArea = catchAsync(async(req, res) => {
+    const winner = await castVoteService.resultsByTypeAndArea(req.params.type, req.params.area);
+    if(winner.length == 1){
+        res.status(httpStatus.OK).send({"winner" : winner});
+    } else {
+        res.status(httpStatus.OK).send({"winners" : winner});
+    }
+});
+
+const queryVotes = catchAsync(async(req, res) => {
+    const votes = await castVoteService.queryVotes();
+    res.status(httpStatus.OK).send({votes});
+});
+
+const cmResults = catchAsync(async(req, res) => {
+    const winner = await castVoteService.cmResults("mla");
+    if(winner.length == 1){
+        res.status(httpStatus.OK).send({"winner" : winner});
+    } else {
+        res.status(httpStatus.OK).send({"winners" : winner});
+    }
+});
+
 module.exports = {
     castVote,
-    isVoted
+    isVoted,
+    resultsByTypeAndArea,
+    queryVotes,
+    cmResults
 };

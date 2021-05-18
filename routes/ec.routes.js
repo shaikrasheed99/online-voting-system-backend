@@ -9,6 +9,7 @@ router.post('/refresh-token', auth(["admin"]), ecController.refreshToken);
 router.get('/ecs', auth(["admin"]), ecController.queryEcs);
 router.get('/ecs/:ecid', auth(["admin"]), ecController.getEcByEcId);
 
+router.post('/voters', auth(["admin"]), voterController.register);
 router.get('/voters', auth(["admin"]), voterController.queryVoters);
 router.get('/voters/:voterid', auth(["admin"]), voterController.getVoterByVoterId);
 router.patch('/voters', auth(["admin"]), voterController.updateVoterByVoterId);

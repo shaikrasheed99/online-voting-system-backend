@@ -4,7 +4,7 @@ const auth = require("../middlewares/auth");
 
 router.post('/register', voterController.register);
 router.post('/login', voterController.login);
-router.post('/refresh-token', voterController.refreshToken);
+router.post('/refresh-token', auth(["voter"]), voterController.refreshToken);
 
 router.get('/voters/:voterId', auth(["voter"]), voterController.getVoterByVoterId);
 router.patch('/voters', auth(["voter"]), voterController.updateVoterByVoterId);

@@ -4,7 +4,7 @@ const auth = require("../middlewares/auth");
 
 router.post('/register', ecController.register)
 router.post('/login', ecController.login);
-router.post('/refresh-token', ecController.refreshToken);
+router.post('/refresh-token', auth(["admin"]), ecController.refreshToken);
 
 router.get('/ecs', auth(["admin"]), ecController.queryEcs);
 router.get('/ecs/:ecid', auth(["admin"]), ecController.getEcByEcId);

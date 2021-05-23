@@ -2,6 +2,7 @@ const httpStatus = require("http-status");
 const bcrypt = require("bcrypt");
 const { Voter, Candidate } = require("../models");
 const ApiError = require("../middlewares/ApiError");
+const candidateService = require('./candidate.service');
 
 const createVoter = async(voterBody) => {
     if(!voterBody.voterId){
@@ -60,12 +61,17 @@ const updateVoterByVoterId = async(voterBody) => {
     if(!voterBody.voterId){
         throw new ApiError(httpStatus.BAD_REQUEST, "VoterID required");
     }
-    const voter = await getVoterByVoterId(voterBody.voterId);
+    const voterId = voterBody.voterId;
+    const voter = await getVoterByVoterId(voterId);
     if(!voter){
         throw new ApiError(httpStatus.NOT_FOUND, "Voter not found");
     }
     Object.assign(voter, voterBody);
     await voter.save();
+    const voterInCandidates = await candidateService.getCandidateByVoterId(voterId);
+    if(voterInCandidates){
+        await voterInCandidates.save();
+    }
     return voter;
 };
 
@@ -74,7 +80,7 @@ const deleteVoterByVoterId = async(voterBody) => {
         throw new ApiError(httpStatus.BAD_REQUEST, "VoterID required");
     }
     const voterId = voterBody.voterId;
-    const voterInCandidates = await Candidate.findOne({voterId});
+    const voterInCandidates = await candidateService.getCandidateByVoterId(voterId);
     if(voterInCandidates){
         await voterInCandidates.remove();
     }

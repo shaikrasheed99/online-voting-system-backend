@@ -45,6 +45,17 @@ const deleteVoterByVoterId = catchAsync(async(req, res) => {
     res.status(httpStatus.OK).send({deletedVoter});
 });
 
+const verify = catchAsync(async(req, res) => {
+    const inputToken = req.headers.authorization.split(' ')[1];
+    const payload = await tokenService.verifyToken(inputToken);
+    const voter = await voterService.getVoterByVoterId(req.params.voterId);
+    if((payload.sub === voter.voterId) && (payload.role === voter.role)){
+        res.status(httpStatus.OK).send("verified");
+    } else {
+        throw new ApiError(httpStatus.UNAUTHORIZED, "Your token is invalid");
+    }
+});
+
 module.exports = {
     register,
     login,
@@ -52,5 +63,6 @@ module.exports = {
     queryVoters,
     getVoterByVoterId,
     updateVoterByVoterId,
-    deleteVoterByVoterId
+    deleteVoterByVoterId,
+    verify
 };

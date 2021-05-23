@@ -35,10 +35,22 @@ const getEcByEcId = catchAsync(async(req, res) => {
     res.status(httpStatus.FOUND).send({ec});
 });
 
+const verify = catchAsync(async(req, res) => {
+    const inputToken = req.headers.authorization.split(' ')[1];
+    const payload = await tokenService.verifyToken(inputToken);
+    const ec = await ecService.getEcByEcId(req.params.ecId);
+    if((payload.sub === ec.ecId) && (payload.role === ec.role)){
+        res.status(httpStatus.OK).send("verified");
+    } else {
+        throw new ApiError(httpStatus.UNAUTHORIZED, "Your token is invalid");
+    }
+});
+
 module.exports = {
     register,
     login,
     refreshToken,
     queryEcs,
-    getEcByEcId
+    getEcByEcId,
+    verify
 };

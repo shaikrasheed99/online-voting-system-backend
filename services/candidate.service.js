@@ -1,7 +1,6 @@
 const httpStatus = require("http-status");
 const ApiError = require("../middlewares/ApiError");
 const { Candidate, Voter } = require("../models");
-const voterService = require("./voter.service.js");
 
 const createCandidate = async(candidateBody) => {
     if(!candidateBody.voterId){
@@ -14,7 +13,7 @@ const createCandidate = async(candidateBody) => {
         throw new ApiError(httpStatus.BAD_REQUEST, "Candidate is already registered");
     }
     const {voterId, candidateId, type, partyName} = candidateBody;
-    const voter = await voterService.getVoterByVoterId(voterId);
+    const voter = await Voter.findOne({voterId});
     if((type === "cm") && (await candidateExistsByTypeAreaPartyName(type, voter.state, partyName))){
         throw new ApiError(httpStatus.BAD_REQUEST, "CM Candidate already there with that partname and type in that area");
     } else if((type === "mp") && (await candidateExistsByTypeAreaPartyName(type, voter.district, partyName))){

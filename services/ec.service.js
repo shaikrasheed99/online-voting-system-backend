@@ -1,6 +1,7 @@
 const httpStatus = require("http-status");
+const moment = require("moment");
 const ApiError = require("../middlewares/ApiError");
-const { EC } = require("../models");
+const { EC, Campaign } = require("../models");
 
 const createEc = async(ecBody) => {
     if(!ecBody.ecId){
@@ -48,9 +49,20 @@ const getEcByEcId = async(ecId) => {
     return ec;
 };
 
+const startCampaign = async(campaignBody) => {
+    if(!campaignBody.district || !campaignBody.type){
+        throw new ApiError(httpStatus.BAD_REQUEST, "District and Type are required");
+    }
+    const exists = await Campaign.findOne({district, type});
+    if(exists){
+        throw new ApiError(httpStatus.BAD_REQUEST, "Campaign already running");
+    }
+};
+
 module.exports = {
     createEc,
     verifyCredientials,
     queryEcs,
-    getEcByEcId
+    getEcByEcId,
+    startCampaign
 };

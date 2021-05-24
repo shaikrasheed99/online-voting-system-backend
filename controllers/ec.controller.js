@@ -46,11 +46,16 @@ const verify = catchAsync(async(req, res) => {
     }
 });
 
+const startCampaign = catchAsync(async(req, res) => {
+    const {district, type} = req.body;
+});
+
 module.exports = {
     register,
     login,
     refreshToken,
     queryEcs,
     getEcByEcId,
-    verify
+    verify,
+    startCampaign
 };

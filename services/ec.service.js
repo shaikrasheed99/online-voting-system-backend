@@ -53,20 +53,20 @@ const startCampaign = async(campaignBody) => {
     if(!campaignBody.district || !campaignBody.type){
         throw new ApiError(httpStatus.BAD_REQUEST, "District and Type are required");
     }
-    const parsedData = JSON.parse(campaignBody);
+    const {district, type} = campaignBody;
     const exists = await Campaign.findOne({district, type});
     if(exists){
         throw new ApiError(httpStatus.BAD_REQUEST, "Campaign already running");
     }
-    let start = parsedData.startDate;
-    start.setHours(parsedData.startTime + 5);
+    let start = new Date(campaignBody.startDate);
+    start.setHours(campaignBody.startTime + 5);
     start.setMinutes(start.getMinutes() + 30);
-    let end = parsedData.endDate;
-    end.setHours(parsedData.endTime + 5 + 12);
+    let end = new Date(campaignBody.endDate);
+    end.setHours(campaignBody.endTime + 5 + 12);
     end.setMinutes(end.getMinutes() + 30);
     const input = {
-        district : parsedData.district,
-        type : parsedData.type,
+        district : campaignBody.district,
+        type : campaignBody.type,
         startDate : start,
         endDate : end
     };

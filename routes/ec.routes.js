@@ -26,6 +26,7 @@ router.delete('/candidates', auth(["admin"]), candidateController.deleteCandidat
 
 router.post('/accept-nomination', auth(["admin"]), candidateController.acceptNomination);
 router.get('/requests', auth(["admin"]), candidateController.getNominationRequests);
+router.post('/start-campaign', auth(["admin"]), ecController.startCampaign);
 
 router.get('/votes', auth(["admin"]), castVoteController.queryVotes);
 router.get('/results/:type/:area', auth(["admin"]), castVoteController.resultsByTypeAndArea);

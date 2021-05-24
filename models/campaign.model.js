@@ -19,14 +19,6 @@ const schema = new mongoose.Schema({
     endDate : {
         type : Date,
         required : true
-    },
-    startTime : {
-        type : Number,
-        required : true
-    },
-    endTime : {
-        type : Number,
-        required : true
     }
 });
 

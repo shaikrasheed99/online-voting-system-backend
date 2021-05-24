@@ -47,7 +47,8 @@ const verify = catchAsync(async(req, res) => {
 });
 
 const startCampaign = catchAsync(async(req, res) => {
-    const {district, type} = req.body;
+    const campaign = await ecService.startCampaign(req.body);
+    res.status(httpStatus.OK).send({campaign});
 });
 
 module.exports = {

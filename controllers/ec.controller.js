@@ -35,7 +35,7 @@ const getEcByEcId = catchAsync(async(req, res) => {
     res.status(httpStatus.FOUND).send({ec});
 });
 
-const verify = catchAsync(async(req, res) => {
+const verifyEc = catchAsync(async(req, res) => {
     const inputToken = req.headers.authorization.split(' ')[1];
     const payload = await tokenService.verifyToken(inputToken);
     const ec = await ecService.getEcByEcId(req.params.ecId);
@@ -57,6 +57,6 @@ module.exports = {
     refreshToken,
     queryEcs,
     getEcByEcId,
-    verify,
+    verifyEc,
     startCampaign
 };

@@ -4,7 +4,10 @@ const auth = require("../middlewares/auth");
 
 router.post('/register', voterController.register);
 router.post('/login', voterController.login);
-router.get('/verified/:voterId', voterController.verify);
+router.post('/forgot-password', voterController.forgotPassword);
+router.post('/send-otp', voterController.sendOTP);
+router.post('/verify-otp', voterController.verifyOTP);
+router.get('/verified/:voterId', voterController.verifyVoter); //to verify voter by his token
 router.post('/refresh-token', auth(["voter"]), voterController.refreshToken);
 
 router.get('/voters/:voterId', auth(["voter"]), voterController.getVoterByVoterId);

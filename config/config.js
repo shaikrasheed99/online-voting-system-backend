@@ -17,5 +17,10 @@ module.exports = {
     jwt : {
         secret : process.env.JWT_SECRET,
         time : process.env.JWT_TIME
+    },
+    otp : {
+        service : process.env.OTP_SERVICE_SID,
+        account : process.env.OTP_ACCOUNT_SID,
+        authToken : process.env.OTP_AUTH_TOKEN
     }
 };

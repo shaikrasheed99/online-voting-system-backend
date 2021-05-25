@@ -72,12 +72,7 @@ const schema = mongoose.Schema({
         type : String,
         required : true,
         minlength : 9,
-        maxlength : 10,
-        validate(value){
-            if(!value.match(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/)){
-                throw new ApiError(httpStatus.NOT_ACCEPTABLE, "Invalid Mobile number");
-            }
-        }
+        maxlength : 13,
     },
     state : {
         type : String,

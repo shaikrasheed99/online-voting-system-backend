@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const { Voter, Candidate } = require("../models");
 const ApiError = require("../middlewares/ApiError");
 const candidateService = require('./candidate.service');
+const config = require("../config/config");
+const client = require("twilio")(config.otp.account, config.otp.authToken);
 
 const createVoter = async(voterBody) => {
     if(!voterBody.voterId){
@@ -34,6 +36,45 @@ const verifyCredientials = async(voterBody) => {
     if(!(await voter.isPasswordMatch(password))){
         throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect password")
     }
+    return voter;
+};
+
+const forgotPassword = async(inputBody) => {
+    const {voterId, secret} = inputBody;
+    const voter = await getVoterByVoterId(voterId);
+    if(!voter){
+        throw new ApiError(httpStatus.NOT_FOUND, "Voter not found");
+    }
+    if(!secret){
+        const {mobile, code} = inputBody;
+        if(!mobile || !code){
+            throw new ApiError(httpStatus.BAD_REQUEST, "Mobile and OTP is required");
+        }
+        if(voter.mobile !== mobile){
+            throw new ApiError(httpStatus.BAD_REQUEST, "Registered mobile and provided mobile numbers are not equal");
+        }
+        let verified = null;
+        const verification = await client.verify.services(config.otp.service).verificationChecks.create({
+            to : mobile,
+            code : code
+        })
+        if((verification.status === "approved") && (verification.valid === true)){
+            verified = true;
+        } else {
+            verified = false;
+        }
+        if(!verified){
+            throw new ApiError(httpStatus.UNAUTHORIZED, "Your OTP is not valid");
+        }
+    }
+    let {password, confirmPassword} = inputBody;
+    if(password !== confirmPassword){
+        throw new ApiError(httpStatus.BAD_REQUEST, "Password and Confirm Password are not equal");
+    }
+    password = await bcrypt.hash(password, 10);
+    confirmPassword = password;
+    Object.assign(voter, {password, confirmPassword});
+    await voter.save();
     return voter;
 };
 
@@ -95,6 +136,7 @@ const deleteVoterByVoterId = async(voterBody) => {
 module.exports = {
     createVoter,
     verifyCredientials,
+    forgotPassword,
     getVoterByVoterId,
     queryVoters,
     updateVoterByVoterId,

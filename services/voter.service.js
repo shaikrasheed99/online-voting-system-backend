@@ -109,7 +109,7 @@ const updateVoterByVoterId = async(voterBody) => {
     }
     Object.assign(voter, voterBody);
     await voter.save();
-    const voterInCandidates = await candidateService.getCandidateByVoterId(voterId);
+    const voterInCandidates = await Candidate.findOne({voterId});
     if(voterInCandidates){
         await voterInCandidates.save();
     }
@@ -121,7 +121,7 @@ const deleteVoterByVoterId = async(voterBody) => {
         throw new ApiError(httpStatus.BAD_REQUEST, "VoterID required");
     }
     const voterId = voterBody.voterId;
-    const voterInCandidates = await candidateService.getCandidateByVoterId(voterId);
+    const voterInCandidates = await Candidate.findOne({voterId});
     if(voterInCandidates){
         await voterInCandidates.remove();
     }

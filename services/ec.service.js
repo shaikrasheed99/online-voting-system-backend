@@ -32,6 +32,45 @@ const verifyCredientials = async(ecBody) => {
     return ec;
 };
 
+const forgotPassword = async(inputBody) => {
+    const {ecId, secret} = inputBody;
+    const ec = await getEcByEcId(ecId);
+    if(!ec){
+        throw new ApiError(httpStatus.NOT_FOUND, "EC not found");
+    }
+    if(!secret){
+        const {mobile, code} = inputBody;
+        if(!mobile || !code){
+            throw new ApiError(httpStatus.BAD_REQUEST, "Mobile and OTP is required");
+        }
+        if(ec.mobile !== mobile){
+            throw new ApiError(httpStatus.BAD_REQUEST, "Registered mobile and provided mobile numbers are not equal");
+        }
+        let verified = null;
+        const verification = await client.verify.services(config.otp.service).verificationChecks.create({
+            to : mobile,
+            code : code
+        })
+        if((verification.status === "approved") && (verification.valid === true)){
+            verified = true;
+        } else {
+            verified = false;
+        }
+        if(!verified){
+            throw new ApiError(httpStatus.UNAUTHORIZED, "Your OTP is not valid");
+        }
+    }
+    let {password, confirmPassword} = inputBody;
+    if(password !== confirmPassword){
+        throw new ApiError(httpStatus.BAD_REQUEST, "Password and Confirm Password are not equal");
+    }
+    password = await bcrypt.hash(password, 10);
+    confirmPassword = password;
+    Object.assign(voter, {password, confirmPassword});
+    await ec.save();
+    return ec;
+};
+
 const queryEcs = async() => {
     const ecs = [];
     await (await EC.find()).forEach((ec) => ecs.push(ec));
@@ -77,6 +116,7 @@ const startCampaign = async(campaignBody) => {
 module.exports = {
     createEc,
     verifyCredientials,
+    forgotPassword,
     queryEcs,
     getEcByEcId,
     startCampaign

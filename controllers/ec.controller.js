@@ -14,6 +14,11 @@ const login = catchAsync(async(req, res) => {
     res.status(httpStatus.OK).send({ec, token});
 });
 
+const forgotPassword = catchAsync(async(req, res) => {
+    const ec = await ecService.forgotPassword(req.body);
+    res.status(httpStatus.OK).send("Password has been changed");
+});
+
 const refreshToken = catchAsync(async(req, res) => {
     const inputToken = req.headers.authorization.split(' ')[1];
     const payload = await tokenService.verifyToken(inputToken);
@@ -51,12 +56,60 @@ const startCampaign = catchAsync(async(req, res) => {
     res.status(httpStatus.OK).send({campaign});
 });
 
+const sendOTP = catchAsync(async(req, res) => {
+    const {ecId, mobile} = req.body;
+    if(!ecId || !mobile){
+        throw new ApiError(httpStatus.BAD_REQUEST, "EcId and Mobile number are required");
+    }
+    const ec = await ecService.getEcByEcId(ecId);
+    if(ec.mobile !== mobile){
+        throw new ApiError(httpStatus.BAD_REQUEST, "Registered mobile and provided mobile numbers are not equal");
+    }
+    client.verify.services(config.otp.service).verifications.create({
+        to : mobile,
+        channel : 'sms'
+    }).then((verification) => {
+        res.status(httpStatus.OK).send({success : true, message : "OTP has sent"});
+    }).catch((error) => {
+        if(error.status === 429){
+            res.status(httpStatus.BAD_GATEWAY).send({success : false, message : "You have reached maximum attempts"});
+        }
+        res.status(httpStatus.BAD_GATEWAY).send({success : false, message : "failed to send otp"});
+    });
+});
+
+const verifyOTP = catchAsync(async(req, res) => {
+    const {mobile, code} = req.body;
+    if(!mobile || !code){
+        throw new ApiError(httpStatus.BAD_REQUEST, "Mobile and OTP are required");
+    }
+    client.verify.services(config.otp.service).verificationChecks.create({
+        to : mobile,
+        code : code
+    }).then((verification) => {
+        if(verification.status === "pending"){
+            res.status(httpStatus.NOT_ACCEPTABLE).send({success : false, message : "Enter your correct OTP again"});
+        }
+        if((verification.status === "approved") && (verification.valid === true)){
+            res.status(httpStatus.OK).send({success : true, message : "verified"});
+        }
+    }).catch((error) => {
+        if(error.status === 429){
+            res.status(httpStatus.BAD_GATEWAY).send({success : false, message : "You have reached maximum attempts"});
+        }
+        res.status(httpStatus.BAD_GATEWAY).send({success : false, message : error});
+    });
+});
+
 module.exports = {
     register,
     login,
+    forgotPassword,
     refreshToken,
     queryEcs,
     getEcByEcId,
     verifyEc,
-    startCampaign
+    startCampaign,
+    sendOTP,
+    verifyOTP
 };

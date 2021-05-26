@@ -7,6 +7,11 @@ const castVote = catchAsync(async(req, res) => {
     res.status(httpStatus.OK).send({castedVote});
 });
 
+const getVotesByVoterId = catchAsync(async(req, res) => {
+    const votes = await castVoteService.getVotesByVoterId(req.params.voterId);
+    res.status(httpStatus.FOUND).send({votes});
+});
+
 const isVoted = catchAsync(async(req, res) => {
     const isvoted = await castVoteService.isVoted(req.params.voterId, req.params.type);
     if(isvoted){
@@ -44,5 +49,6 @@ module.exports = {
     isVoted,
     resultsByTypeAndArea,
     queryVotes,
-    cmResults
+    cmResults,
+    getVotesByVoterId
 };

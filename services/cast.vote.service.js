@@ -19,6 +19,17 @@ const createVote = async(voteBody) => {
     return vote;
 };
 
+const getVotesByVoterId = async(voterId) => {
+    const votes = [];
+    await (await CastVote.find({voterId})).forEach((vote) => {
+        votes.push(vote);
+    });
+    if(votes.length === 0){
+        throw new ApiError(httpStatus.NOT_FOUND, "Empty Votes");
+    }
+    return votes;
+};
+
 const isVoted = async(voterId, type) => {
     const isvoted = await CastVote.findOne({voterId, type});
     if(isvoted != null){
@@ -33,7 +44,7 @@ const queryVotes = async(req, res) => {
     await (await CastVote.find()).forEach((vote) => {
         votes.push(vote);
     });
-    if(votes.length == 0){
+    if(votes.length === 0){
         throw new ApiError(httpStatus.NOT_FOUND, "Empty Votes");
     }
     return votes;
@@ -95,6 +106,7 @@ const cmResults = async(inputType) => {
 
 module.exports = {
     createVote,
+    getVotesByVoterId,
     isVoted,
     resultsByTypeAndArea,
     queryVotes,

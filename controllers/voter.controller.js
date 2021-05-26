@@ -78,7 +78,6 @@ const sendOTP = catchAsync(async(req, res) => {
     }).then((verification) => {
         res.status(httpStatus.OK).send({success : true, message : "OTP has sent"});
     }).catch((error) => {
-        console.log(error);
         if(error.status === 429){
             res.status(httpStatus.BAD_GATEWAY).send({success : false, message : "You have reached maximum attempts"});
         }

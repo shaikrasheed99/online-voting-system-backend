@@ -22,6 +22,7 @@ router.patch('/candidates', auth(["voter"]), candidateController.updateCandidate
 router.delete('/candidates', auth(["voter"]), candidateController.deleteCandidateByCandidateId);
 
 router.get('/voted/:voterId/:type', auth(["voter"]), castVoteController.isVoted);
+router.get('/votes/:voterId', auth(["voter"]), castVoteController.getVotesByVoterId);
 router.post('/cast-vote', auth(["voter"]), castVoteController.castVote);
 router.get('/results/:type/:area', auth(["voter"]), castVoteController.resultsByTypeAndArea);
 router.get('/cm-results', auth(["voter"]), castVoteController.cmResults);

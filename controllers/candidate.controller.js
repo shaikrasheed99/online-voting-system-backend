@@ -24,12 +24,12 @@ const queryCandidates = catchAsync(async(req, res) => {
 
 const getCandidateByIdOrType = catchAsync(async(req, res) => {
     const candidate = await candidateService.getCandidateByIdOrType(req.params.data);
-    res.status(httpStatus.FOUND).send({candidate});
+    res.status(httpStatus.OK).send({candidate});
 });
 
 const getCandidatesByTypeAndArea = catchAsync(async(req, res) => {
     const candidates = await candidateService.getCandidatesByTypeAndArea(req.params.type, req.params.area);
-    res.status(httpStatus.FOUND).send({candidates});
+    res.status(httpStatus.OK).send({candidates});
 });
 
 const updateCandidateByCandidateId = catchAsync(async(req, res) => {
@@ -46,7 +46,7 @@ const candidateExistsByTypeAreaPartyName = catchAsync(async(req, res) => {
     const {type, area, partyName} = req.params;
     const candidate = await candidateService.candidateExistsByTypeAreaPartyName(type, area, partyName);
     if(candidate){
-        res.status(httpStatus.FOUND).send("Candidate already with that partname and type in that area");
+        res.status(httpStatus.OK).send("Candidate already with that partname and type in that area");
     } else {
         res.status(httpStatus.NOT_FOUND).send("Candidate not exists");
     }

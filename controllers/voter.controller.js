@@ -7,7 +7,7 @@ const client = require("twilio")(config.otp.account, config.otp.authToken);
 
 const register = catchAsync(async(req, res) => {
     const voter = await voterService.createVoter(req.body);
-    res.status(httpStatus.CREATED).send({voter});
+    res.status(httpStatus.OK).send({voter});
 });
 
 const login = catchAsync(async(req, res) => {
@@ -39,7 +39,7 @@ const queryVoters = catchAsync(async(req, res) => {
 
 const getVoterByVoterId = catchAsync(async(req, res) => {
     const voter = await voterService.getVoterByVoterId(req.params.voterId);
-    res.status(httpStatus.FOUND).send({voter});
+    res.status(httpStatus.OK).send({voter});
 });
 
 const updateVoterByVoterId = catchAsync(async(req, res) => {

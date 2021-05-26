@@ -9,7 +9,7 @@ const castVote = catchAsync(async(req, res) => {
 
 const getVotesByVoterId = catchAsync(async(req, res) => {
     const votes = await castVoteService.getVotesByVoterId(req.params.voterId);
-    res.status(httpStatus.FOUND).send({votes});
+    res.status(httpStatus.OK).send({votes});
 });
 
 const isVoted = catchAsync(async(req, res) => {

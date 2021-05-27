@@ -13,7 +13,7 @@ const createVote = async(voteBody) => {
         throw new ApiError(httpStatus.NOT_FOUND, "Candidate is not accepted");
     }
     if(await isVoted(voterId, candidate.type)){;
-        throw new ApiError(httpStatus.BAD_REQUEST, `Voter already voted for this ${candidate.type.toUpperCase()}`);
+        throw new ApiError(httpStatus.BAD_REQUEST, `You have already voted for this ${candidate.type.toUpperCase()} type`);
     }
     const vote = await CastVote.create(voteBody);
     return vote;

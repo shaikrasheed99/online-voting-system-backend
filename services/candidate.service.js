@@ -10,20 +10,20 @@ const createCandidate = async(candidateBody) => {
         throw new ApiError(httpStatus.BAD_REQUEST, "VoterID is not registered");
     }
     if(await Candidate.isVoterIdTaken(candidateBody.voterId)){
-        throw new ApiError(httpStatus.BAD_REQUEST, "Candidate is already registered");
+        throw new ApiError(httpStatus.BAD_REQUEST, "You have already registered");
     }
     const {voterId, candidateId, type, partyName} = candidateBody;
     const voter = await Voter.findOne({voterId});
     if((type === "cm") && (await candidateExistsByTypeAreaPartyName(type, voter.state, partyName))){
-        throw new ApiError(httpStatus.BAD_REQUEST, "CM Candidate already there with that partname and type in that area");
+        throw new ApiError(httpStatus.BAD_REQUEST, "CM Candidate was already there with Partname and Type in your area");
     } else if((type === "mp") && (await candidateExistsByTypeAreaPartyName(type, voter.district, partyName))){
-        throw new ApiError(httpStatus.BAD_REQUEST, "MP Candidate already there with that partname and type in that area");
+        throw new ApiError(httpStatus.BAD_REQUEST, "MP Candidate was already there with Partname and Type in your area");
     } else if((type === "mla") && (await candidateExistsByTypeAreaPartyName(type, voter.constituency, partyName))){
-        throw new ApiError(httpStatus.BAD_REQUEST, "MLA Candidate already there with that partname and type in that area");
+        throw new ApiError(httpStatus.BAD_REQUEST, "MLA Candidate was already there with Partname and Type in your area");
     } else if((type === "zptc") && (await candidateExistsByTypeAreaPartyName(type, voter.mandal, partyName))){
-        throw new ApiError(httpStatus.BAD_REQUEST, "ZPTC Candidate already there with that partname and type in that area");
+        throw new ApiError(httpStatus.BAD_REQUEST, "ZPTC Candidate was already there with Partname and Type in your area");
     } else if((type === "sarpanch") && (await candidateExistsByTypeAreaPartyName(type, voter.village, partyName))){
-        throw new ApiError(httpStatus.BAD_REQUEST, "Sarpanch Candidate already there with that partname and type in that area");
+        throw new ApiError(httpStatus.BAD_REQUEST, "Sarpanch Candidate was already there with Partname and Type in your area");
     }
     const candidate = await Candidate.create(candidateBody);
     return candidate;

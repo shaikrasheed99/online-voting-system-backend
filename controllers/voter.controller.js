@@ -1,9 +1,15 @@
 const catchAsync = require("../middlewares/catchAsync");
 const httpStatus = require("http-status");
+const Razorpay = require("razorpay");
+const crypto = require("crypto");
 const { voterService, tokenService } = require("../services");
 const ApiError = require("../middlewares/ApiError");
 const config = require("../config/config");
 const client = require("twilio")(config.otp.account, config.otp.authToken);
+const razorpay = new Razorpay({
+    key_id : config.payment.id,
+    key_secret : config.payment.secret
+});
 
 const register = catchAsync(async(req, res) => {
     const voter = await voterService.createVoter(req.body);
@@ -108,6 +114,24 @@ const verifyOTP = catchAsync(async(req, res) => {
     });
 });
 
+const paymentOrder = catchAsync(async(req, res) => {
+    razorpay.orders.create(req.body).then((data) => {
+        res.status(httpStatus.OK).send({sub : data, status : "success"});
+    }).catch((error) => {
+        res.status(httpStatus.NOT_FOUND).send({sub : error, status : "failed"});
+    })
+});
+
+const paymentVerify = catchAsync(async(req, res) => {
+    const input = req.body.razorpay_order_id + " " + req.body.razorpay_payment_id;
+    const signature = crypto.createHmac("sha256", config.payment.secret).update(input.toString()).digest("hex");
+    if(req.body.razorpay_signature === signature){
+        res.status(httpStatus.OK).send({status : "success"});
+    } else {
+        res.status(httpStatus.NOT_FOUND).send({status : "failure"});
+    }
+});
+
 module.exports = {
     register,
     login,
@@ -119,5 +143,7 @@ module.exports = {
     deleteVoterByVoterId,
     verifyVoter,
     sendOTP,
-    verifyOTP
+    verifyOTP,
+    paymentOrder,
+    paymentVerify
 };

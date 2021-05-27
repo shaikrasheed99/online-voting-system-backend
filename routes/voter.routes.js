@@ -27,4 +27,7 @@ router.post('/cast-vote', auth(["voter"]), castVoteController.castVote);
 router.get('/results/:type/:area', auth(["voter"]), castVoteController.resultsByTypeAndArea);
 router.get('/cm-results', auth(["voter"]), castVoteController.cmResults);
 
+router.post('/payment-order', auth(["voter"]), voterController.paymentOrder);
+router.post('/payment-verify', auth(["voter"]), voterController.paymentVerify);
+
 module.exports = router;

@@ -123,7 +123,7 @@ const paymentOrder = catchAsync(async(req, res) => {
 });
 
 const paymentVerify = catchAsync(async(req, res) => {
-    const input = req.body.razorpay_order_id + " " + req.body.razorpay_payment_id;
+    const input = req.body.razorpay_order_id + "|" + req.body.razorpay_payment_id;
     const signature = crypto.createHmac("sha256", config.payment.secret).update(input.toString()).digest("hex");
     if(req.body.razorpay_signature === signature){
         res.status(httpStatus.OK).send({status : "success"});

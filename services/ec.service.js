@@ -97,12 +97,9 @@ const startCampaign = async(campaignBody) => {
     if(exists){
         throw new ApiError(httpStatus.BAD_REQUEST, "Campaign already running");
     }
-    let start = new Date(campaignBody.startDate);
-    start.setHours(campaignBody.startTime + 5);
-    start.setMinutes(start.getMinutes() + 30);
-    let end = new Date(campaignBody.endDate);
-    end.setHours(campaignBody.endTime + 5 + 12);
-    end.setMinutes(end.getMinutes() + 30);
+    const present = new Date();
+    const start = new Date(campaignBody.startDate);
+    const end = new Date(campaignBody.endDate);
     const input = {
         district : campaignBody.district,
         type : campaignBody.type,
@@ -113,11 +110,37 @@ const startCampaign = async(campaignBody) => {
     return campaign;
 };
 
+const stopCampaign = async(campaignBody) => {
+    const {district, type} = campaignBody;
+    if(!district || !type){
+        throw new ApiError(httpStatus.BAD_REQUEST, "District and Type are required");
+    }
+    const campaign = await Campaign.findOne({district, type});
+    if(!campaign){
+        throw new ApiError(httpStatus.NOT_FOUND, "Campaingn is not found");
+    }
+    await campaign.remove();
+    return campaign;
+};
+
+const queryCampaigns = async() => {
+    const campaigns = [];
+    await (await Campaign.find()).forEach((campaign) => {
+        campaigns.push(campaign);
+    });
+    if(campaigns.length === 0){
+        throw new ApiError(httpStatus.NOT_FOUND, "Campaigns are empty");
+    }
+    return campaigns;
+};
+
 module.exports = {
     createEc,
     verifyCredientials,
     forgotPassword,
     queryEcs,
     getEcByEcId,
-    startCampaign
+    startCampaign,
+    stopCampaign,
+    queryCampaigns
 };

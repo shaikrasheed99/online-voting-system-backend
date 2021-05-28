@@ -56,6 +56,16 @@ const startCampaign = catchAsync(async(req, res) => {
     res.status(httpStatus.OK).send({campaign});
 });
 
+const stopCampaign = catchAsync(async(req, res) => {
+    const campaign = await ecService.stopCampaign(req.body);
+    res.status(httpStatus.OK).send({campaign});
+});
+
+const queryCampaigns = catchAsync(async(req, res) => {
+    const campaigns = await ecService.queryCampaigns();
+    res.status(httpStatus.OK).send(campaigns);
+});
+
 const sendOTP = catchAsync(async(req, res) => {
     const {ecId, mobile} = req.body;
     if(!ecId || !mobile){
@@ -110,6 +120,8 @@ module.exports = {
     getEcByEcId,
     verifyEc,
     startCampaign,
+    stopCampaign,
     sendOTP,
-    verifyOTP
+    verifyOTP,
+    queryCampaigns
 };

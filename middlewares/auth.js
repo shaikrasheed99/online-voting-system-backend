@@ -18,7 +18,7 @@ const auth = (roles) => (req, res, next) => {
                     return reject(new ApiError(httpStatus.FORBIDDEN, "You cannot access other voter details"));
                 } else if ((req.body.voterId !== undefined) && (req.body.candidateId !== undefined)) { //specially for cast-vote api
                     if(req.body.voterId !== user.voterId){
-                        return reject(new ApiError(httpStatus.FORBIDDEN, "You cannot access with invalid token"));
+                        return reject(new ApiError(httpStatus.FORBIDDEN, "You cannot see other voter details to vote"));
                     } else {
                         return resolve();
                     }

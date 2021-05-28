@@ -91,7 +91,9 @@ const getVoterByVoterId = async(voterId) => {
 
 const queryVoters = async() => {
     const voters = [];
-    await (await Voter.find()).forEach((voter) => voters.push(voter));
+    await (await Voter.find()).forEach((voter) => {
+        voters.push(voter)
+    });
     if(voters.length == 0){
         throw new ApiError(httpStatus.NOT_FOUND, "Voters are empty");
     }

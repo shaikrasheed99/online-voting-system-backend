@@ -85,7 +85,8 @@ const getVotesByVoterId = async(inputVoterId) => {
                 const vote = {};
                 const {voterId, candidateId, partyName, position, area} = data;
                 if(voterId === inputVoterId){
-                    Object.assign(vote,{voterId, candidateId, partyName, position, area});
+                    const type = position;
+                    Object.assign(vote,{voterId, candidateId, partyName, type, area});
                     votes.push(vote);
                 }
             }).catch((error) => {

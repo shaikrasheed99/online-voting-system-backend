@@ -24,7 +24,7 @@ const isVoted = catchAsync(async(req, res) => {
 const resultsByTypeAndArea = catchAsync(async(req, res) => {
     const winner = await castVoteService.resultsByTypeAndArea(req.params.type, req.params.area);
     if(winner.length == 1){
-        res.status(httpStatus.OK).send({"winner" : winner});
+        res.status(httpStatus.OK).send({"winners" : winner});
     } else {
         res.status(httpStatus.OK).send({"winners" : winner});
     }

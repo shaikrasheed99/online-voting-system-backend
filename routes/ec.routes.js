@@ -36,7 +36,6 @@ router.get('/campaigns', auth(["admin"]), ecController.queryCampaigns);
 
 router.get('/votes', auth(["admin"]), castVoteController.queryVotes);
 router.get('/results/:district/:type/:area', auth(["admin"]), access("backward"), castVoteController.resultsByTypeAndArea);
-router.get('/cm-results', auth(["admin"]), castVoteController.cmResults);
 router.get('/voted/:voterId/:type', auth(["admin"]), castVoteController.isVoted);
 
 module.exports = router;

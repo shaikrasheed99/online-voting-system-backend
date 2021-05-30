@@ -26,7 +26,6 @@ router.get('/voted/:voterId/:type', auth(["voter"]), castVoteController.isVoted)
 router.get('/votes/:voterId', auth(["voter"]), castVoteController.getVotesByVoterId);
 router.post('/cast-vote', auth(["voter"]), access("forward"), castVoteController.castVote);
 router.get('/results/:district/:type/:area', auth(["voter"]), access("backward"), castVoteController.resultsByTypeAndArea);
-router.get('/cm-results', auth(["voter"]), castVoteController.cmResults);
 
 router.post('/payment-order', auth(["voter"]), voterController.paymentOrder);
 router.post('/payment-verify', auth(["voter"]), voterController.paymentVerify);

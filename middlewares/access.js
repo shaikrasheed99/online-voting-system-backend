@@ -15,7 +15,6 @@ const access = (input) => (req, res, next) => {
                     const type = candidate.type;
                     const campaign = await Campaign.findOne({district, type});
                     const presentTime = new Date();
-                    console.log(campaign);
                     if(campaign === null){
                         return reject(new ApiError(httpStatus.UNAUTHORIZED, "You cannot vote because Campaign is not running now"));
                     }

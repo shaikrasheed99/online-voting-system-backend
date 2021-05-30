@@ -35,20 +35,10 @@ const queryVotes = catchAsync(async(req, res) => {
     res.status(httpStatus.OK).send({votes});
 });
 
-const cmResults = catchAsync(async(req, res) => {
-    const winner = await castVoteService.cmResults("mla");
-    if(winner.length == 1){
-        res.status(httpStatus.OK).send({"winner" : winner});
-    } else {
-        res.status(httpStatus.OK).send({"winners" : winner});
-    }
-});
-
 module.exports = {
     castVote,
     isVoted,
     resultsByTypeAndArea,
     queryVotes,
-    cmResults,
     getVotesByVoterId
 };

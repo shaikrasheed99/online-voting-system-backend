@@ -26,5 +26,12 @@ module.exports = {
     payment : {
         id : process.env.PAYMENT_ID,
         secret : process.env.PAYMENT_SECRET
+    },
+    blockchain : {
+        account : process.env.BLOCKCHAIN_ACCOUNT,
+        privateKey : process.env.BLOCKCHAIN_PRIVATE_KEY,
+        contract : process.env.BLOCKCHAIN_CONTRACT,
+        infuraUrl : process.env.BLOCKCHAIN_INFURA_URL,
+        abi : process.env.BLOCKCHAIN_ABI
     }
 };
